@@ -1,0 +1,19 @@
+SHOW DATABASES;
+
+CREATE DATABASE PRAC1;
+
+USE PRAC1;
+
+CREATE TABLE usercredentials(
+    uid INT(10) UNSIGNED NOT NULL AUTO_INCREMENT, 
+    username VARCHAR(255) DEFAULT NULL,
+    userpassword VARCHAR(255) DEFAULT NULL,
+    PRIMARY KEY (uid),
+    UNIQUE KEY username(username)
+);
+
+INSERT INTO usercredentials(username, userpassword) VALUES('MD5 TEST', MD5("Rahul"));
+
+INSERT INTO usercredentials(username, userpassword) VALUES('SHA2 TEST', SHA2("Rahul", 256));
+
+SELECT * FROM usercredentials;

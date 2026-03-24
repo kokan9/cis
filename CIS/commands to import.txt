@@ -1,0 +1,7 @@
+py -3.12 -m pip install pycryptodome
+change the version number as needed or as installed in the system
+
+
+
+
+pip install dkimpy
