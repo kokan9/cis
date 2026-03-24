@@ -1,0 +1,61 @@
+Step 1: Create Table
+CREATE TABLE mytable (
+    name VARCHAR(20),
+    gender VARCHAR(10),
+    race VARCHAR(10),
+    aid INT,
+    fines INT,
+    drugs INT,
+    dorm VARCHAR(10)
+);
+
+Step 2: Insert Records
+INSERT INTO mytable VALUES('Adams','M','C',5000,45,1,'Holmes');
+INSERT INTO mytable VALUES('Bailey','M','B',0,0,0,'Grey');
+INSERT INTO mytable VALUES('Chin','F','A',3000,20,0,'West');
+INSERT INTO mytable VALUES('Dewitt','M','B',1000,35,3,'Grey');
+INSERT INTO mytable VALUES('Earhart','F','C',2000,95,1,'Holmes');
+INSERT INTO mytable VALUES('Fein','F','C',1000,15,0,'West');
+INSERT INTO mytable VALUES('Groff','M','C',4000,0,3,'West');
+INSERT INTO mytable VALUES('Hill','F','V',5000,10,2,'Holmes');
+INSERT INTO mytable VALUES('Koch','F','C',0,0,1,'West');
+INSERT INTO mytable VALUES('Liu','F','A',0,10,2,'Grey');
+INSERT INTO mytable VALUES('Majors','M','C',2000,0,2,'Grey');
+
+Step 3: Direct Attack
+SELECT name
+FROM mytable
+WHERE gender='M' AND drugs=1;
+
+Step 4: Indirect SUM Attack
+(a) Female Aid
+CREATE TABLE female_aid AS
+SELECT dorm, SUM(aid) AS f_aid
+FROM mytable
+WHERE gender='F'
+GROUP BY dorm;
+
+(b) Male Aid
+CREATE TABLE male_aid AS
+SELECT dorm, SUM(aid) AS m_aid
+FROM mytable
+WHERE gender='M'
+GROUP BY dorm;
+
+(c) Join Query
+SELECT m.dorm,
+       m.m_aid,
+       IFNULL(f.f_aid,0) AS f_aid,
+       m.m_aid + IFNULL(f.f_aid,0) AS total
+FROM male_aid m
+LEFT JOIN female_aid f
+ON m.dorm = f.dorm;
+
+Step 5: Count Attack
+SELECT dorm,
+       SUM(CASE WHEN gender='M' THEN 1 ELSE 0 END) AS male,
+       SUM(CASE WHEN gender='F' THEN 1 ELSE 0 END) AS female,
+       COUNT(*) AS total
+FROM mytable
+GROUP BY dorm;
+
